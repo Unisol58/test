@@ -7,17 +7,14 @@
             <i scale="0.8" v-else class="far fa-star muted" />
         </li>
     </ul>
-    <span class="counter" v-if="hasCounter">{{ stars }} of {{ maxRating }}</span>
+    <span class="counter" v-if="hasCounter">Keskmine hinne: {{ this.recipeData.average_rating }}</span>
 </div>
 </template>
 
 <script>
 export default {
     props: {
-        rating: {
-            type: Number,
-            required: true
-        },
+
         maxRating: {
             type: Number,
             default: 5
@@ -25,22 +22,55 @@ export default {
         hasCounter: {
             type: Boolean,
             default: true
-        }
+        },
+        recipe: {},
+        user: {},
+        recipeData: 0,
     },
     data() {
         return {
             stars: this.rating
         }
     },
+    mounted() {
+        this.hasRated()
+    },
     methods: {
-        rate(star) {
+        rate: function(star) {
             if (
                 typeof star === 'number' &&
                 star <= this.maxRating &&
                 star >= 0
             )
                 this.stars = this.stars === star ? star - 1 : star
+
+            this.storeRating();
+        },
+        storeRating: function() {
+            var _this = this;
+            axios.post('/api/ratings', {
+                    rating: this.stars,
+                    recipe_id: this.recipe.id
+                })
+                .then(function(response) {
+
+                })
+                .catch(function(error) {
+                    console.log(error)
+                });
+        },
+
+        hasRated: function() {
+            var _this = this;
+            axios.get(`/api/user/${this.user.id}/rating/${this.recipe.id}`)
+                .then(function(response) {
+                    _this.stars = response.data[0].rating
+                })
+                .catch(function(error) {
+                    console.log(error)
+                });
         }
+
     }
 }
 </script>

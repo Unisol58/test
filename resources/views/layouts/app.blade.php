@@ -9,7 +9,11 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-
+    <script>
+        window.User = {
+            id: {{ optional(auth()->user())->id }},
+        }
+    </script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">

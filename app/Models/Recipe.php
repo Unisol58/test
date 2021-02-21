@@ -17,6 +17,8 @@ class Recipe extends Model
       'is_public',
     ];
 
+    protected $appends = ['average_rating'];
+
     protected $casts = [
         'preparation_time' => 'integer',
         'price_range' => 'integer',
@@ -33,5 +35,10 @@ class Recipe extends Model
     public function ratings()
     {
       return $this->hasMany(Rating::class);
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return $this->ratings()->average('rating');
     }
 }

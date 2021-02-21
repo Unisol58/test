@@ -6399,7 +6399,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var _this = this;
 
-      axios.post('/api/comments/store', {
+      axios.post('/api/comments', {
         name: this.name,
         comment: this.comment,
         recipe_id: this.recipe_id
@@ -6532,10 +6532,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
-    rating: {
-      type: Number,
-      required: true
-    },
     maxRating: {
       type: Number,
       "default": 5
@@ -6543,16 +6539,42 @@ __webpack_require__.r(__webpack_exports__);
     hasCounter: {
       type: Boolean,
       "default": true
-    }
+    },
+    recipe: {},
+    user: {},
+    recipeData: 0
   },
   data: function data() {
     return {
       stars: this.rating
     };
   },
+  mounted: function mounted() {
+    this.hasRated();
+  },
   methods: {
     rate: function rate(star) {
       if (typeof star === 'number' && star <= this.maxRating && star >= 0) this.stars = this.stars === star ? star - 1 : star;
+      this.storeRating();
+    },
+    storeRating: function storeRating() {
+      var _this = this;
+
+      axios.post('/api/ratings', {
+        rating: this.stars,
+        recipe_id: this.recipe.id
+      }).then(function (response) {})["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    hasRated: function hasRated() {
+      var _this = this;
+
+      axios.get("/api/user/".concat(this.user.id, "/rating/").concat(this.recipe.id)).then(function (response) {
+        _this.stars = response.data[0].rating;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   }
 });
@@ -6610,18 +6632,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 // import 'vue-awesome/icons/clock'
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       recipes: [],
       showModal: false,
-      slug: false,
-      id: false,
-      price: 0,
       sortBy: false,
       sortDirection: 'asc',
-      comments: false
+      recipe: null
     };
   },
   mounted: function mounted() {
@@ -6636,10 +6663,7 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"]();
     },
     showRecipe: function showRecipe(recipe) {
-      this.slug = recipe.slug;
-      this.price = recipe.price_range;
-      this.id = recipe.id;
-      this.comments = recipe.comments;
+      this.recipe = recipe;
       this.showModal = true;
     },
     sort: function sort(s) {
@@ -6772,30 +6796,15 @@ __webpack_require__.r(__webpack_exports__);
     this.getDetailedInfo(this.slug);
   },
   mounted: function mounted() {
-    console.log(this);
+    console.log(this.recipeData);
   },
   props: {
-    price: {
-      type: Number,
-      required: true
-    },
-    id: {
-      type: Number,
-      required: true
-    },
-    slug: {
-      type: String,
-      required: true
-    },
     rating: {
       type: Number,
       required: false,
       "default": 0
     },
-    comments: {
-      type: Array,
-      required: false
-    }
+    recipeData: {}
   },
   data: function data() {
     return {
@@ -6808,11 +6817,10 @@ __webpack_require__.r(__webpack_exports__);
     getDetailedInfo: function getDetailedInfo() {
       var _this = this;
 
-      axios.get("https://api.fitlap.ee/v2/recipe/public?slug=".concat(this.slug)).then(function (response) {
+      axios.get("https://api.fitlap.ee/v2/recipe/public?slug=".concat(this.recipeData.slug)).then(function (response) {
         _this.reset();
 
         _this.recipe = response.data.data;
-        console.log(_this.recipe);
       })["catch"]()["finally"](function () {
         _this.reset();
       });
@@ -6866,6 +6874,7 @@ var files = __webpack_require__("./resources/js sync recursive \\.vue$/");
 files.keys().map(function (key) {
   return Vue.component(key.split('/').pop().split('.')[0], files(key)["default"]);
 });
+Vue.prototype.$user = window.User;
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -11452,7 +11461,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "#toiduained li[data-v-7b051b1e] {\n  display: block;\n  width: 100%;\n}\n.ingredient-logo[data-v-7b051b1e] {\n  width: 20px;\n  margin-left: 5px;\n  margin-right: 5px;\n}\n.modal-mask[data-v-7b051b1e] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: table;\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper[data-v-7b051b1e] {\n  display: table-cell;\n  vertical-align: middle;\n  z-index: 1;\n}\n.modal-container[data-v-7b051b1e] {\n  width: 800px;\n  margin: 0 auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  transition: all 0.3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3[data-v-7b051b1e] {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body[data-v-7b051b1e] {\n  margin: 20px 0;\n}\n.modal-default-button[data-v-7b051b1e] {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter[data-v-7b051b1e] {\n  opacity: 0;\n}\n.modal-leave-active[data-v-7b051b1e] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-7b051b1e],\n.modal-leave-active .modal-container[data-v-7b051b1e] {\n  transform: scale(1.1);\n}\n.sk-folding-cube[data-v-7b051b1e] {\n  margin: 20px auto;\n  width: 40px;\n  height: 40px;\n  position: relative;\n  transform: rotateZ(45deg);\n}\n.sk-folding-cube .sk-cube[data-v-7b051b1e] {\n  float: left;\n  width: 50%;\n  height: 50%;\n  position: relative;\n  transform: scale(1.1);\n}\n.sk-folding-cube .sk-cube[data-v-7b051b1e]:before {\n  content: \"\";\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: #333;\n  -webkit-animation: sk-foldCubeAngle-data-v-7b051b1e 2.4s infinite linear both;\n  animation: sk-foldCubeAngle-data-v-7b051b1e 2.4s infinite linear both;\n  transform-origin: 100% 100%;\n}\n.sk-folding-cube .sk-cube2[data-v-7b051b1e] {\n  transform: scale(1.1) rotateZ(90deg);\n}\n.sk-folding-cube .sk-cube3[data-v-7b051b1e] {\n  transform: scale(1.1) rotateZ(180deg);\n}\n.sk-folding-cube .sk-cube4[data-v-7b051b1e] {\n  transform: scale(1.1) rotateZ(270deg);\n}\n.sk-folding-cube .sk-cube2[data-v-7b051b1e]:before {\n  -webkit-animation-delay: 0.3s;\n  animation-delay: 0.3s;\n}\n.sk-folding-cube .sk-cube3[data-v-7b051b1e]:before {\n  -webkit-animation-delay: 0.6s;\n  animation-delay: 0.6s;\n}\n.sk-folding-cube .sk-cube4[data-v-7b051b1e]:before {\n  -webkit-animation-delay: 0.9s;\n  animation-delay: 0.9s;\n}\n@-webkit-keyframes sk-foldCubeAngle-data-v-7b051b1e {\n0%, 10% {\n    transform: perspective(140px) rotateX(-180deg);\n    opacity: 0;\n}\n25%, 75% {\n    transform: perspective(140px) rotateX(0deg);\n    opacity: 1;\n}\n100%, 90% {\n    transform: perspective(140px) rotateY(180deg);\n    opacity: 0;\n}\n}\n@keyframes sk-foldCubeAngle-data-v-7b051b1e {\n0%, 10% {\n    transform: perspective(140px) rotateX(-180deg);\n    opacity: 0;\n}\n25%, 75% {\n    transform: perspective(140px) rotateX(0deg);\n    opacity: 1;\n}\n100%, 90% {\n    transform: perspective(140px) rotateY(180deg);\n    opacity: 0;\n}\n}\n.close[data-v-7b051b1e] {\n  display: relative;\n  right: 0;\n  top: 0;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "#toiduained li[data-v-7b051b1e] {\n  display: block;\n  width: 100%;\n}\n.ingredient-logo[data-v-7b051b1e] {\n  width: 20px;\n  margin-left: 5px;\n  margin-right: 5px;\n}\n.modal-mask[data-v-7b051b1e] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: table;\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper[data-v-7b051b1e] {\n  display: table-cell;\n  vertical-align: middle;\n  z-index: 1;\n}\n.modal-container[data-v-7b051b1e] {\n  width: 800px;\n  margin: 0 auto;\n  padding: 20px 30px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  transition: all 0.3s ease;\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3[data-v-7b051b1e] {\n  margin-top: 0;\n  color: #42b983;\n}\n.modal-body[data-v-7b051b1e] {\n  margin: 20px 0;\n}\n.modal-default-button[data-v-7b051b1e] {\n  float: right;\n}\n.modal-enter[data-v-7b051b1e] {\n  opacity: 0;\n}\n.modal-leave-active[data-v-7b051b1e] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-7b051b1e],\n.modal-leave-active .modal-container[data-v-7b051b1e] {\n  transform: scale(1.1);\n}\n.sk-folding-cube[data-v-7b051b1e] {\n  margin: 20px auto;\n  width: 40px;\n  height: 40px;\n  position: relative;\n  transform: rotateZ(45deg);\n}\n.sk-folding-cube .sk-cube[data-v-7b051b1e] {\n  float: left;\n  width: 50%;\n  height: 50%;\n  position: relative;\n  transform: scale(1.1);\n}\n.sk-folding-cube .sk-cube[data-v-7b051b1e]:before {\n  content: \"\";\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: #333;\n  -webkit-animation: sk-foldCubeAngle-data-v-7b051b1e 2.4s infinite linear both;\n  animation: sk-foldCubeAngle-data-v-7b051b1e 2.4s infinite linear both;\n  transform-origin: 100% 100%;\n}\n.sk-folding-cube .sk-cube2[data-v-7b051b1e] {\n  transform: scale(1.1) rotateZ(90deg);\n}\n.sk-folding-cube .sk-cube3[data-v-7b051b1e] {\n  transform: scale(1.1) rotateZ(180deg);\n}\n.sk-folding-cube .sk-cube4[data-v-7b051b1e] {\n  transform: scale(1.1) rotateZ(270deg);\n}\n.sk-folding-cube .sk-cube2[data-v-7b051b1e]:before {\n  -webkit-animation-delay: 0.3s;\n  animation-delay: 0.3s;\n}\n.sk-folding-cube .sk-cube3[data-v-7b051b1e]:before {\n  -webkit-animation-delay: 0.6s;\n  animation-delay: 0.6s;\n}\n.sk-folding-cube .sk-cube4[data-v-7b051b1e]:before {\n  -webkit-animation-delay: 0.9s;\n  animation-delay: 0.9s;\n}\n@-webkit-keyframes sk-foldCubeAngle-data-v-7b051b1e {\n0%, 10% {\n    transform: perspective(140px) rotateX(-180deg);\n    opacity: 0;\n}\n25%, 75% {\n    transform: perspective(140px) rotateX(0deg);\n    opacity: 1;\n}\n100%, 90% {\n    transform: perspective(140px) rotateY(180deg);\n    opacity: 0;\n}\n}\n@keyframes sk-foldCubeAngle-data-v-7b051b1e {\n0%, 10% {\n    transform: perspective(140px) rotateX(-180deg);\n    opacity: 0;\n}\n25%, 75% {\n    transform: perspective(140px) rotateX(0deg);\n    opacity: 1;\n}\n100%, 90% {\n    transform: perspective(140px) rotateY(180deg);\n    opacity: 0;\n}\n}\n.close[data-v-7b051b1e] {\n  display: relative;\n  right: 0;\n  top: 0;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -65580,7 +65589,7 @@ var render = function() {
     _vm._v(" "),
     _vm.hasCounter
       ? _c("span", { staticClass: "counter" }, [
-          _vm._v(_vm._s(_vm.stars) + " of " + _vm._s(_vm.maxRating))
+          _vm._v("Keskmine hinne: " + _vm._s(this.recipeData.average_rating))
         ])
       : _vm._e()
   ])
@@ -65665,6 +65674,20 @@ var render = function() {
             }
           },
           [_vm._v("Kommentaarid")]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-outline-secondary",
+            class: [_vm.sortBy === "average_rating" ? _vm.sortDirection : ""],
+            on: {
+              click: function($event) {
+                return _vm.sort("average_rating")
+              }
+            }
+          },
+          [_vm._v("Hinne")]
         )
       ])
     ]),
@@ -65728,6 +65751,23 @@ var render = function() {
                           _vm._s(recipe.comments.length) +
                           "\n                    "
                       )
+                    ]),
+                    _vm._v(" "),
+                    _c("span", { staticStyle: { padding: "0px 5px" } }, [
+                      _vm._v("·")
+                    ]),
+                    _vm._v(" "),
+                    _c("span", [
+                      _c("i", { staticClass: "far fa-star muted" }),
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(
+                            recipe.average_rating > 0
+                              ? recipe.average_rating
+                              : 0
+                          ) +
+                          "\n                    "
+                      )
                     ])
                   ],
                   1
@@ -65739,12 +65779,7 @@ var render = function() {
         _vm._v(" "),
         _vm.showModal
           ? _c("view-recipe-item", {
-              attrs: {
-                price: this.price,
-                slug: this.slug,
-                id: this.id,
-                comments: this.comments
-              },
+              attrs: { recipeData: this.recipe },
               on: {
                 close: function($event) {
                   _vm.showModal = false
@@ -65836,7 +65871,7 @@ var render = function() {
                         _vm._v(" "),
                         _c("price-range-item", {
                           staticStyle: { float: "left" },
-                          attrs: { grade: this.price }
+                          attrs: { grade: this.recipeData.price_range }
                         }),
                         _vm._v(" "),
                         _c("span", { staticStyle: { padding: "0px 5px" } }, [
@@ -65866,7 +65901,18 @@ var render = function() {
                     _c(
                       "div",
                       {},
-                      [_c("rating-item", { attrs: { rating: this.rating } })],
+                      [
+                        this.recipe && this.recipeData
+                          ? _c("rating-item", {
+                              attrs: {
+                                rating: this.rating,
+                                recipe: this.recipe,
+                                user: _vm.$user,
+                                recipeData: this.recipeData
+                              }
+                            })
+                          : _vm._e()
+                      ],
                       1
                     )
                   ]),
@@ -65939,7 +65985,7 @@ var render = function() {
                         [
                           _vm._v(
                             "Kommentaarid (" +
-                              _vm._s(this.comments.length) +
+                              _vm._s(this.recipeData.comments.length) +
                               ")"
                           )
                         ]
@@ -66022,7 +66068,7 @@ var render = function() {
                       _c("comments-item", {
                         attrs: {
                           recipe_id: this.recipe.id,
-                          comments: this.comments
+                          comments: this.recipeData.comments
                         }
                       })
                     ],

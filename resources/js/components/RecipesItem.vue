@@ -6,6 +6,7 @@
             <button class="btn btn-outline-secondary" @click="sort('price_range')" v-bind:class="[sortBy === 'price_range' ? sortDirection : '']">Hind</button>
             <button class="btn btn-outline-secondary" @click="sort('preparation_time')" v-bind:class="[sortBy === 'preparation_time' ? sortDirection : '']">Aeg</button>
             <button class="btn btn-outline-secondary" @click="sort('comments')" v-bind:class="[sortBy === 'comments' ? sortDirection : '']">Kommentaarid</button>
+            <button class="btn btn-outline-secondary" @click="sort('average_rating')" v-bind:class="[sortBy === 'average_rating' ? sortDirection : '']">Hinne</button>
         </div>
     </div>
     <div class="container flex">
@@ -27,13 +28,20 @@
                         <i class="far fa-comment"></i>
                         {{ recipe.comments.length }}
                     </span>
+
+                    <span style="padding:0px 5px;">&#183;</span>
+                    <span>
+                        <i class="far fa-star muted"></i>
+                        {{ recipe.average_rating > 0 ?  recipe.average_rating : 0 }}
+                    </span>
                 </aside>
 
             </div>
         </section>
 
         <!-- Modal for detailed recipe view  -->
-        <view-recipe-item v-if="showModal" @close="showModal = false" v-bind:price="this.price" v-bind:slug="this.slug" v-bind:id="this.id" v-bind:comments="this.comments" />
+        <!-- <view-recipe-item v-if="showModal" @close="showModal = false" v-bind:price="this.price" v-bind:slug="this.slug" v-bind:id="this.id" v-bind:comments="this.comments" v-bind:recipeData="this.recipe" /> -->
+        <view-recipe-item v-if="showModal" @close="showModal = false" v-bind:recipeData="this.recipe" />
     </div>
 </div>
 </template>
@@ -46,12 +54,9 @@ export default {
         return {
             recipes: [],
             showModal: false,
-            slug: false,
-            id: false,
-            price: 0,
             sortBy: false,
             sortDirection: 'asc',
-            comments: false,
+            recipe: null,
         }
     },
 
@@ -69,10 +74,7 @@ export default {
         },
 
         showRecipe: function(recipe) {
-            this.slug = recipe.slug
-            this.price = recipe.price_range
-            this.id = recipe.id
-            this.comments = recipe.comments
+            this.recipe = recipe
             this.showModal = true
         },
 

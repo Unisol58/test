@@ -13,5 +13,5 @@ class RecipeController extends Controller
     {
       return Recipe::with('comments')->get()->take(10);
     }
-    
+
 }

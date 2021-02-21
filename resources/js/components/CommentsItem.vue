@@ -34,7 +34,7 @@ export default {
         submitComment: function() {
             console.log(this.comments)
             var _this = this;
-            axios.post('/api/comments/store', {
+            axios.post('/api/comments', {
                     name: this.name,
                     comment: this.comment,
                     recipe_id: this.recipe_id

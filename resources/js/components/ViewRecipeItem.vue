@@ -21,7 +21,7 @@
                             <div class="col-sm">
                                 <div class="recipe-info">
                                     <span class="h3 d-block">{{ this.recipe.original_name }}</span>
-                                    <price-range-item style="float:left;" v-bind:grade='this.price' />
+                                    <price-range-item style="float:left;" v-bind:grade='this.recipeData.price_range' />
                                     <span style="padding:0px 5px;">&#183;</span>
                                     <span>{{ this.recipe.energy }} kcal</span>
                                     <span style="padding:0px 5px;">&#183;</span>
@@ -32,7 +32,7 @@
                                 </div>
 
                                 <div class="">
-                                    <rating-item v-bind:rating="this.rating" />
+                                    <rating-item v-bind:rating="this.rating" v-if="this.recipe && this.recipeData" v-bind:recipe="this.recipe" v-bind:user="$user" v-bind:recipeData="this.recipeData" />
                                 </div>
                             </div>
                             <div class="col-sm">
@@ -51,7 +51,7 @@
                                 <a class="nav-link" id="valmistamine-tab" data-toggle="tab" href="#valmistamine" role="tab" aria-controls="valmistamine" aria-selected="false">Valmistamine</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="comments-tab" data-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="false">Kommentaarid ({{ this.comments.length }})</a>
+                                <a class="nav-link" id="comments-tab" data-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="false">Kommentaarid ({{ this.recipeData.comments.length }})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -68,7 +68,7 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
-                                <comments-item v-bind:recipe_id="this.recipe.id" v-bind:comments="this.comments" />
+                                <comments-item v-bind:recipe_id="this.recipe.id" v-bind:comments="this.recipeData.comments" />
                             </div>
                         </div>
                     </div>
@@ -86,31 +86,16 @@ export default {
         this.getDetailedInfo(this.slug)
     },
     mounted() {
-        console.log(this)
+        console.log(this.recipeData)
     },
 
     props: {
-        price: {
-            type: Number,
-            required: true
-        },
-        id: {
-            type: Number,
-            required: true
-        },
-        slug: {
-            type: String,
-            required: true
-        },
         rating: {
             type: Number,
             required: false,
             default: 0
         },
-        comments: {
-            type: Array,
-            required: false,
-        },
+        recipeData: {},
     },
     data() {
         return {
@@ -122,11 +107,10 @@ export default {
 
     methods: {
         getDetailedInfo: function() {
-            axios.get(`https://api.fitlap.ee/v2/recipe/public?slug=${this.slug}`)
+            axios.get(`https://api.fitlap.ee/v2/recipe/public?slug=${this.recipeData.slug}`)
                 .then((response) => {
                     this.reset()
                     this.recipe = response.data.data
-                    console.log(this.recipe)
                 })
                 .catch()
                 .finally(() => {
@@ -146,11 +130,7 @@ export default {
     display: block;
     width: 100%;
 }
-// .main-image {
-//     position: relative;
-//     left: -8em;
-//     top: 0;
-// }
+
 .ingredient-logo {
     width: 20px;
     margin-left: 5px;
@@ -197,15 +177,6 @@ export default {
 .modal-default-button {
     float: right;
 }
-
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
 
 .modal-enter {
     opacity: 0;
