@@ -11,7 +11,7 @@ class RecipeController extends Controller
 {
     public function index()
     {
-      return Recipe::with('comments')->get()->take(10);
+      return Recipe::with('comments')->get()->take(21);
     }
 
 }
